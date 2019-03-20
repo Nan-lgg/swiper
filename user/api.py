@@ -5,6 +5,7 @@ from common import keys
 from libs.http import render_json
 from user import logics
 from user.models import User
+from user.forms import ProfileForm
 
 
 def get_vcode(request):
@@ -47,3 +48,15 @@ def get_profile(request):
     '''获取用户个人资料'''
     profile_dict = request.user.profile.to_dict()
     return render_json(profile_dict)
+
+
+def set_profile(request):
+    '''设置用户的个人资料'''
+    form = ProfileForm(request.POST)
+    if form.is_valid():
+        profile = form.save(commit=False)
+        profile.id = request.session['uid']
+        profile.save()
+        return render_json()
+    else:
+        return render_json(form.errors, errors.PROFILE_ERR)
