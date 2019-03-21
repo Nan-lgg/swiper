@@ -106,3 +106,6 @@ venv.bak/
 
 # pycharm
 .idea
+
+# qiniu
+.qiniu_pythonsdk_hostscache.json
