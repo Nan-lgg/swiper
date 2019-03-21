@@ -23,7 +23,7 @@ class User(models.Model, ModelMixin):
     birth_year = models.IntegerField(default=2000, verbose_name='出生年')
     birth_month = models.IntegerField(default=1, verbose_name='出生月')
     birth_day = models.IntegerField(default=1, verbose_name='出生日')
-    avatar = models.CharField(max_length=256, verbose_name='个人形象')
+    avatar = models.CharField(max_length=256, verbose_name='个人形象的URL')
     location = models.CharField(max_length=8, choices=LOCATION, verbose_name='常居地')
 
     @property

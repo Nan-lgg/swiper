@@ -60,3 +60,9 @@ def set_profile(request):
         return render_json()
     else:
         return render_json(form.errors, errors.PROFILE_ERR)
+
+
+def upload_avatar(request):
+    avatar = request.FILES.get('avatar')
+    logics.save_avatar.delay(request.user, avatar)
+    return render_json()
