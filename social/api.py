@@ -1,6 +1,7 @@
 from libs.http import render_json
 from social import logics
 from social.models import Swiped
+from user.models import User
 
 
 def get_rmcds(request):
@@ -36,3 +37,11 @@ def rewind(request):
     '''反悔'''
     logics.rewind(request.user)
     return render_json()
+
+
+def show_liked_me(request):
+    '''查看喜欢过我的人'''
+    liked_me_uid_list = Swiped.who_liked_me(request.user.id)
+    liked_me_users = User.objects.filter(id__in=liked_me_uid_list)
+    result = [user.to_dict() for user in liked_me_users]
+    return render_json(result)

@@ -31,6 +31,12 @@ class Swiped(models.Model):
         '''检查是否喜欢过某人'''
         return cls.objects.filter(uid=uid, sid=sid, stype__in=['like', 'superlike']).exists()
 
+    @classmethod
+    def who_liked_me(cls, uid):
+        '''喜欢过我的人的 UID'''
+        liked_me = cls.objects.filter(sid=uid, stype__in=['like', 'superlike'])
+        return liked_me.values_list('uid', flat=True)
+
 
 class Friend(models.Model):
     uid1 = models.IntegerField(verbose_name='好友ID 1')
