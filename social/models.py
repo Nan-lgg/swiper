@@ -1,6 +1,8 @@
 from django.db import models
 from django.db.models import Q
 
+from common import errors
+
 
 class Swiped(models.Model):
     '''活动记录'''
@@ -18,7 +20,7 @@ class Swiped(models.Model):
     def swipe(cls, uid, sid, stype):
         '''添加一条滑动记录'''
         if stype not in ['dislike', 'like', 'superlike']:
-            raise ValueError()  # TODO
+            raise errors.StypeErr
 
         # 使用 get_or_create，避免重复创建滑动记录
         swiped, _ = cls.objects.get_or_create(uid=uid, sid=sid, stype=stype)
