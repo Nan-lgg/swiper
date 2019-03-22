@@ -44,6 +44,12 @@ class Friend(models.Model):
         return friends
 
     @classmethod
+    def break_off(cls, uid1, uid2):
+        '''断交'''
+        uid1, uid2 = (uid2, uid1) if uid1 > uid2 else (uid1, uid2)
+        cls.objects.filter(uid1=uid1, uid2=uid2).delete()
+
+    @classmethod
     def is_friends(cls, uid1, uid2):
         '''检查两个人是否是好友关系'''
         uid1, uid2 = (uid2, uid1) if uid1 > uid2 else (uid1, uid2)

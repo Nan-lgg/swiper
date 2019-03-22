@@ -1,5 +1,10 @@
 import datetime
 
+from django.core.cache import cache
+
+from swiper import config
+from common import errors
+from common import keys
 from user.models import User
 from social.models import Swiped
 from social.models import Friend
@@ -48,3 +53,31 @@ def superlike_someone(user, sid):
         return True
     else:
         return False
+
+
+def rewind(user):
+    '''反悔操作'''
+    key = keys.REWIND_TIMES % user.id
+    # 检查当天反悔操作是否已达上限
+    rewind_times = cache.get(key, 0)
+    if rewind_times >= config.REWIND_LIMIT:
+        raise errors.RewindLimited
+
+    # 找出最后一次滑动记录
+    latest_swiped = Swiped.objects.filter(uid=user.id).latest('stime')
+
+    # 检查之前是否成功匹配为好友，如果是好友则断交
+    if latest_swiped.stype in ['like', 'superlike']:
+        Friend.break_off(user.id, latest_swiped.sid)  # 有则删除，没有则什么也不做
+
+    # 删除滑动记录
+    latest_swiped.delete()
+
+    # 重设缓存
+    rewind_times += 1
+    now_time = datetime.datetime.now().time()
+    remain_time = 86400 - now_time.hour * 3600 - now_time.minute * 60 - now_time.second
+    cache.set(key, rewind_times, remain_time)
+
+    # 另一种计算今天剩余秒数的方法
+    # remain_time = 86400 - (time.time() + 3600 * 8) % 86400

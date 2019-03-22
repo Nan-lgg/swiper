@@ -30,3 +30,9 @@ def superlike(request):
 def friends(request):
     friends_data = [friend.to_dict() for friend in request.user.friends]
     return render_json(friends_data)
+
+
+def rewind(request):
+    '''反悔'''
+    logics.rewind(request.user)
+    return render_json()
