@@ -2,6 +2,7 @@ from libs.http import render_json
 from social import logics
 from social.models import Swiped
 from user.models import User
+from vip.logics import need_perm
 
 
 def get_rmcds(request):
