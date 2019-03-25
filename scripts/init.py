@@ -14,7 +14,7 @@ django.setup()
 
 
 from user.models import User
-# from vip.models import Vip, Permission, VipPermRelation
+from vip.models import Vip, Permission, VipPermRelation
 
 
 last_names = (
@@ -73,7 +73,7 @@ def create_robots(n):
 def init_permission():
     '''创建权限模型'''
     permissions = (
-        ('vipflag',        '会员身份标识'),
+        ('vipflag',       '会员身份标识'),
         ('superlike',     '超级喜欢'),
         ('rewind',        '反悔功能'),
         ('anylocation',   '任意更改定位'),
@@ -90,7 +90,7 @@ def init_permission():
 def init_vip():
     for i in range(4):
         vip, _ = Vip.objects.get_or_create(
-            name='%d级会员' % i,
+            name='%d 级会员' % i,
             level=i,
             price=i * 5.0
         )
@@ -131,7 +131,7 @@ def create_vip_perm_relations():
 
 
 if __name__ == '__main__':
-    create_robots(5000)
-    # init_permission()
-    # init_vip()
-    # create_vip_perm_relations()
+    # create_robots(5000)
+    init_permission()
+    init_vip()
+    create_vip_perm_relations()

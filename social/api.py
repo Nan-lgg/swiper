@@ -22,6 +22,7 @@ def like(request):
     return render_json({'is_matched': matched})
 
 
+@need_perm('superlike')
 def superlike(request):
     sid = int(request.POST.get('sid'))
     matched = logics.superlike_someone(request.user, sid)
@@ -33,12 +34,14 @@ def friends(request):
     return render_json(friends_data)
 
 
+@need_perm('rewind')
 def rewind(request):
     '''反悔'''
     logics.rewind(request.user)
     return render_json()
 
 
+@need_perm('show_liked_me')
 def show_liked_me(request):
     '''查看喜欢过我的人'''
     liked_me_uid_list = Swiped.who_liked_me(request.user.id)
