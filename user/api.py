@@ -17,7 +17,7 @@ def get_vcode(request):
         logics.send_vcode(phonenum)
         return render_json()
     else:
-        return render_json(code=errors.PHONENUM_ERR)
+        raise errors.PhonenumErr
 
 
 def check_vcode(request):
@@ -39,9 +39,9 @@ def check_vcode(request):
             request.session['uid'] = user.id
             return render_json(data=user.to_dict())
         else:
-            return render_json(code=errors.VCODE_ERR)
+            raise errors.VcodeErr
     else:
-        return render_json(code=errors.PHONENUM_ERR)
+        raise errors.PhonenumErr
 
 
 def get_profile(request):
@@ -59,7 +59,7 @@ def set_profile(request):
         profile.save()
         return render_json()
     else:
-        return render_json(form.errors, errors.PROFILE_ERR)
+        raise errors.ProfileErr(form.errors)
 
 
 def upload_avatar(request):
