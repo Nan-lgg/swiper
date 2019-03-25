@@ -1,6 +1,7 @@
 from django.db import models
 
 from libs.orm import ModelMixin
+from social.models import Friend
 
 
 class User(models.Model, ModelMixin):
@@ -31,6 +32,12 @@ class User(models.Model, ModelMixin):
         if not hasattr(self, '_profile'):
             self._profile, _ = Profile.objects.get_or_create(id=self.id)
         return self._profile
+
+    @property
+    def friends(self):
+        '''所有的好友'''
+        fid_list = Friend.friends_id_list(self.id)
+        return User.objects.filter(id__in=fid_list)
 
 
 class Profile(models.Model, ModelMixin):
