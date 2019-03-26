@@ -51,7 +51,14 @@ def check_vcode(request):
 
 def get_profile(request):
     '''获取用户个人资料'''
-    profile_dict = request.user.profile.to_dict()
+    key = keys.PROFILE_KEY % request.user.id
+    profile_dict = cache.get(key)
+    print('从缓存获取：%s' % profile_dict)
+    if profile_dict is None:
+        profile_dict = request.user.profile.to_dict()
+        print('从数据库获取：%s' % profile_dict)
+        cache.set(key, profile_dict, 3600)
+        print('写入缓存')
     return render_json(profile_dict)
 
 
@@ -62,6 +69,11 @@ def set_profile(request):
         profile = form.save(commit=False)
         profile.id = request.session['uid']
         profile.save()
+
+        # 修改缓存
+        key = keys.PROFILE_KEY % request.user.id
+        cache.set(key, profile.to_dict(), 3600)
+        print('修改缓存')
         return render_json()
     else:
         raise errors.ProfileErr(form.errors)
