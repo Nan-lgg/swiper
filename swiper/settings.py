@@ -68,6 +68,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'swiper.wsgi.application'
 
+# Redis 配置
+REDIS = {
+    'host': 'localhost',
+    'port': 6379,
+    'db': 8,
+}
+
 # Django 缓存默认配置
 # CACHES = {
 #     'default': {

@@ -23,7 +23,7 @@ class Swiped(models.Model):
             raise errors.StypeErr
 
         # 使用 get_or_create，避免重复创建滑动记录
-        swiped, _ = cls.objects.get_or_create(uid=uid, sid=sid, stype=stype)
+        swiped, _ = cls.get_or_create(uid=uid, sid=sid, stype=stype)
         return swiped
 
     @classmethod
@@ -46,7 +46,7 @@ class Friend(models.Model):
     def make_friends(cls, uid1, uid2):
         '''建立好友关系'''
         uid1, uid2 = (uid2, uid1) if uid1 > uid2 else (uid1, uid2)
-        friends, _ = cls.objects.get_or_create(uid1=uid1, uid2=uid2)
+        friends, _ = cls.get_or_create(uid1=uid1, uid2=uid2)
         return friends
 
     @classmethod

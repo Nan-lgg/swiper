@@ -34,7 +34,7 @@ def check_vcode(request):
         cached_vcode = cache.get(keys.VCODE_KEY % phonenum)  # 从缓存获取验证码
         if cached_vcode == vcode:
             try:
-                user = User.objects.get(phonenum=phonenum)
+                user = User.get(phonenum=phonenum)
             except User.DoesNotExist:
                 # 如果账号不存在，直接创建出来
                 user = User.objects.create(phonenum=phonenum, nickname=phonenum)

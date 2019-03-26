@@ -1,11 +1,10 @@
 from django.db import models
 
-from libs.orm import ModelMixin
 from social.models import Friend
 from vip.models import Vip
 
 
-class User(models.Model, ModelMixin):
+class User(models.Model):
     SEX = (
         ('male', '男性'),
         ('female', '女性'),
@@ -34,14 +33,14 @@ class User(models.Model, ModelMixin):
     def profile(self):
         '''用户的个人资料'''
         if not hasattr(self, '_profile'):
-            self._profile, _ = Profile.objects.get_or_create(id=self.id)
+            self._profile, _ = Profile.get_or_create(id=self.id)
         return self._profile
 
     @property
     def vip(self):
         '''用户的 VIP 数据'''
         if not hasattr(self, '_vip'):
-            self._vip = Vip.objects.get(id=self.vip_id)
+            self._vip = Vip.get(id=self.vip_id)
         return self._vip
 
     @property
@@ -51,7 +50,7 @@ class User(models.Model, ModelMixin):
         return User.objects.filter(id__in=fid_list)
 
 
-class Profile(models.Model, ModelMixin):
+class Profile(models.Model):
     SEX = (
         ('male', '男性'),
         ('female', '女性'),

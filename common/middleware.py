@@ -25,7 +25,7 @@ class AuthMiddleware(MiddlewareMixin):
         uid = request.session.get('uid')
         if uid:
             try:
-                request.user = User.objects.get(id=uid)
+                request.user = User.get(id=uid)
                 return
             except User.DoesNotExist:
                 err_log.error('%s : %s' % (errors.UserNotExist.code, errors.UserNotExist()))
