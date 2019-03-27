@@ -59,3 +59,14 @@ def show_liked_me(request):
     liked_me_users = User.objects.filter(id__in=liked_me_uid_list)
     result = [user.to_dict() for user in liked_me_users]
     return render_json(result)
+
+
+def top10(request):
+    '''显示排行前十的用户'''
+    # 格式: rank_data = {
+    #     1: {'id':  3, 'nickname': 'asdf', 'sex': 'male', ..., 'score': 123}
+    #     2: {'id':  7, 'nickname': 'bob',  'sex': 'male', ..., 'score': 100}
+    #     3: {'id': 15, 'nickname': 'lucy', 'sex': 'female', ..., 'score': 90}
+    # }
+    rank_data = logics.get_top_n(10)
+    return render_json(rank_data)

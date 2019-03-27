@@ -71,6 +71,10 @@ def rewind(user):
     if latest_swiped.stype in ['like', 'superlike']:
         Friend.break_off(user.id, latest_swiped.sid)  # 有则删除，没有则什么也不做
 
+    # 恢复滑动积分
+    score = config.SWIPE_SCORE[latest_swiped.stype]
+    rds.zincrby(keys.SWIPE_RANK, -score, latest_swiped.sid)
+
     # 删除滑动记录
     latest_swiped.delete()
 
@@ -97,3 +101,27 @@ def add_swipe_score(swipe_view_func):
 
         return response
     return wrapper
+
+
+def get_top_n(num):
+    '''获取排行前 N 的用户数据'''
+    # 数据格式
+    # origin_data = [
+    #     (b'575', 920.0),  # 第一项是 uid, 第二项是"用户积分"
+    #     (b'778', 624.0),
+    #     (b'632', 520.0),
+    # ]
+    origin_data = rds.zrevrange(keys.SWIPE_RANK, 0, num - 1, withscores=True)
+
+    # 整理数据格式
+    cleaned_data = [[int(uid), int(score)] for uid, score in origin_data]
+
+    # 生成排名数据
+    rank_data = {}
+    for rank, (uid, score) in enumerate(cleaned_data, 1):
+        user = User.get(id=uid)  # NOTE: 此处可以改成批量获取，提升数据操作上的性能
+        user_data = user.to_dict()
+        user_data['score'] = score
+        rank_data[rank] = user_data
+
+    return rank_data
