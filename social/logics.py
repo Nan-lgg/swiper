@@ -2,6 +2,7 @@ import datetime
 
 from django.core.cache import cache
 
+from libs.cache import rds
 from swiper import config
 from common import errors
 from common import keys
@@ -81,3 +82,18 @@ def rewind(user):
 
     # 另一种计算今天剩余秒数的方法
     # remain_time = 86400 - (time.time() + 3600 * 8) % 86400
+
+
+def add_swipe_score(swipe_view_func):
+    def wrapper(request):
+        response = swipe_view_func(request)
+
+        if 200 <= response.status_code < 300:
+            # 记录被滑动用户的积分
+            stype = swipe_view_func.__name__
+            score = config.SWIPE_SCORE[stype]
+            sid = request.POST.get('sid')
+            rds.zincrby(keys.SWIPE_RANK, score, sid)
+
+        return response
+    return wrapper

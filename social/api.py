@@ -15,6 +15,7 @@ def get_rmcds(request):
     return render_json(rcmd_data)
 
 
+@logics.add_swipe_score
 def dislike(request):
     sid = int(request.POST.get('sid'))
     Swiped.swipe(request.user.id, sid, 'dislike')
@@ -22,6 +23,7 @@ def dislike(request):
     return render_json()
 
 
+@logics.add_swipe_score
 def like(request):
     sid = int(request.POST.get('sid'))
     matched = logics.like_someone(request.user, sid)
@@ -30,6 +32,7 @@ def like(request):
 
 
 @need_perm('superlike')
+@logics.add_swipe_score
 def superlike(request):
     sid = int(request.POST.get('sid'))
     matched = logics.superlike_someone(request.user, sid)
