@@ -13,6 +13,7 @@ class AuthMiddleware(MiddlewareMixin):
     AUTH_URL_WHITE_LIST = [
         '/api/user/get_vcode',
         '/api/user/check_vcode',
+        '/api/vip/show_vip',
     ]
 
     def process_request(self, request):
