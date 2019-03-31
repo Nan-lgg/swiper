@@ -1,8 +1,12 @@
+import logging
+
 from libs.http import render_json
 from social import logics
 from social.models import Swiped
 from user.models import User
 from vip.logics import need_perm
+
+inf_log = logging.getLogger('inf')
 
 
 def get_rmcds(request):
@@ -14,12 +18,14 @@ def get_rmcds(request):
 def dislike(request):
     sid = int(request.POST.get('sid'))
     Swiped.swipe(request.user.id, sid, 'dislike')
+    inf_log.info('%s dislike %s' % (request.user.id, sid))
     return render_json()
 
 
 def like(request):
     sid = int(request.POST.get('sid'))
     matched = logics.like_someone(request.user, sid)
+    inf_log.info('%s like %s' % (request.user.id, sid))
     return render_json({'is_matched': matched})
 
 
@@ -27,6 +33,7 @@ def like(request):
 def superlike(request):
     sid = int(request.POST.get('sid'))
     matched = logics.superlike_someone(request.user, sid)
+    inf_log.info('%s superlike %s' % (request.user.id, sid))
     return render_json({'is_matched': matched})
 
 

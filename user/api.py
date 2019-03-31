@@ -1,3 +1,5 @@
+import logging
+
 from django.core.cache import cache
 
 from common import errors
@@ -6,6 +8,8 @@ from libs.http import render_json
 from user import logics
 from user.models import User
 from user.forms import ProfileForm
+
+inf_log = logging.getLogger('inf')
 
 
 def get_vcode(request):
@@ -37,6 +41,7 @@ def check_vcode(request):
 
             # 在 session 中记录登录状态
             request.session['uid'] = user.id
+            inf_log.info('Login: %s %s' % (user.id, user.nickname))
             return render_json(data=user.to_dict())
         else:
             raise errors.VcodeErr

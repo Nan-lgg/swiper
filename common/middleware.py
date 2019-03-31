@@ -1,8 +1,12 @@
+import logging
+
 from django.utils.deprecation import MiddlewareMixin
 
 from common import errors
 from libs.http import render_json
 from user.models import User
+
+err_log = logging.getLogger('err')
 
 
 class AuthMiddleware(MiddlewareMixin):
@@ -24,13 +28,16 @@ class AuthMiddleware(MiddlewareMixin):
                 request.user = User.objects.get(id=uid)
                 return
             except User.DoesNotExist:
+                err_log.error('%s : %s' % (errors.UserNotExist.code, errors.UserNotExist()))
                 return render_json(code=errors.UserNotExist.code)
         else:
-            return render_json(code=errors.LogicError.code)
+            err_log.error('%s : %s' % (errors.LoginReqired.code, errors.LoginReqired()))
+            return render_json(code=errors.LoginReqired.code)
 
 
 class LogicErrMiddleware(MiddlewareMixin):
     def process_exception(self, request, exception):
         if isinstance(exception, errors.LogicError):
             data = exception.data or str(exception)
+            err_log.error('%s : %s' % (exception.code, data))
             return render_json(data=data, code=exception.code)
